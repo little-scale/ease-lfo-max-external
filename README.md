@@ -8,7 +8,7 @@ A signal-rate LFO external that generates modulation curves using easing functio
 - **Signal-Rate Frequency**: Accept frequency as signal input for FM and frequency modulation
 - **Bang Phase Reset**: Bang input instantly resets phase to zero for synchronization
 - **Phase Offset Control**: Third inlet for precise phase control (0.0-1.0)
-- **Mirror Mode**: Smooth mirrored waveforms (0→1→0) for natural back-and-forth motion
+- **Three Mirror Modes**: Normal (0→1), triangular (0→1→0), and reverse (1→0) waveforms
 - **3-Inlet Design**: Clean separation of frequency, easing function, and phase control
 - **Bipolar Output**: -1.0 to +1.0 output range for standard modulation applications
 - **Real-Time Function Switching**: Change easing functions during playback without clicks
@@ -100,8 +100,9 @@ The external provides 12 easing functions based on animation industry standards:
    - **Bang**: Reset phase to 0.0 for synchronization
 
 2. **Second Inlet**: Easing Function Selection
-   - **Integer**: Select easing function (0-11)
-   - **Float**: Converted to integer automatically
+   - **Integer**: Select easing function (0-11) - direct integer input
+   - **Float**: Converted to integer automatically (for compatibility)
+   - **Signal**: Signal-rate easing function selection
 
 3. **Third Inlet**: Phase Offset
    - **Float**: Phase offset in range 0.0-1.0
@@ -109,21 +110,23 @@ The external provides 12 easing functions based on animation industry standards:
 
 ### Messages
 
-- **[mirror 1]**: Enable mirror mode (0→1→0 waveform)
-- **[mirror 0]**: Disable mirror mode (0→1 waveform)
+- **[mirror 0]**: Normal mode (0→1 waveform)
+- **[mirror 1]**: Mirror mode (0→1→0 triangular waveform)  
+- **[mirror 2]**: Reverse mode (1→0 inverted waveform)
 
 ### Mirror Mode Explained
 
-Mirror mode transforms the phase progression from a linear ramp (0→1) into a triangular pattern (0→1→0):
+Mirror mode controls how the phase progression is transformed:
 
-- **Normal mode**: Phase goes 0.0 → 1.0, then wraps back to 0.0
-- **Mirror mode**: Phase goes 0.0 → 1.0 → 0.0 within each cycle
-- **Timing**: Frequency is automatically halved in mirror mode to maintain consistent cycle duration
+- **Normal mode (0)**: Phase goes 0.0 → 1.0, then wraps back to 0.0
+- **Mirror mode (1)**: Phase goes 0.0 → 1.0 → 0.0 within each cycle (triangular)
+- **Reverse mode (2)**: Phase goes 1.0 → 0.0 (inverted)
+- **Timing**: Frequency is automatically halved in mirror mode (1) to maintain consistent cycle duration
 
-This creates smoother, more natural back-and-forth modulation, especially useful for:
-- Filter sweeps that return smoothly to the starting point
-- Tremolo effects with natural breathing patterns
-- Parameter automation with symmetric motion
+**Applications by mode**:
+- **Normal (0)**: Standard LFO behavior, traditional modulation
+- **Mirror (1)**: Smooth back-and-forth motion, natural breathing patterns, filter sweeps that return smoothly
+- **Reverse (2)**: Inverted modulation curves, negative correlation effects, complementary modulation
 
 ### Instantiation Arguments
 Optional argument for initial easing function:
